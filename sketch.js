@@ -2,17 +2,30 @@ let TS = 25;
 let snake = undefined;
 let GAME_VELOCITY = undefined;
 let food = undefined;
+let gameScore = 0;
+let scoreBoard = undefined;
 
 function setup() {
   createCanvas(500, 500);
   GAME_VELOCITY = 5;
   snake = new Snake();
+  scoreBoard = createP("SCORE = " + gameScore);
+  let refreshButton = createButton('Reset Game');
+  refreshButton.mousePressed(refresh);
 }
 
 function draw() {
   frameRate(GAME_VELOCITY);
   background(51);
   snake.update();
+  if (snake.dead == 1) {
+    textSize(64);
+    textAlign(CENTER);
+    textStyle(BOLD);
+    fill(255, 0, 0);
+    text("YOU DIED!", width / 2, height / 2);
+    frameRate(0);
+  }
   snake.show();
   plant_food();
 
@@ -20,6 +33,8 @@ function draw() {
     snake.eat();
     food = undefined;
     GAME_VELOCITY++;
+    gameScore++;
+    scoreBoard.html("SCORE = " + gameScore);
   }
 
 }
@@ -36,28 +51,20 @@ function plant_food() {
 function keyPressed() {
   switch (keyCode) {
     case UP_ARROW:
-      if (!(snake.dir_x === 0 && snake.dir_y === 1)) {
-        snake.dir_x = 0;
-        snake.dir_y = -1;
-      }
+      snake.changeDirection("UP");
       break;
     case DOWN_ARROW:
-      if (!(snake.dir_x === 0 && snake.dir_y === -1)) {
-        snake.dir_x = 0;
-        snake.dir_y = 1;
-      }
+      snake.changeDirection("DOWN");
       break;
     case LEFT_ARROW:
-      if (!(snake.dir_x === 1 && snake.dir_y === 0)) {
-        snake.dir_x = -1;
-        snake.dir_y = 0;
-      }
+      snake.changeDirection("LEFT");
       break;
     case RIGHT_ARROW:
-      if (!(snake.dir_x === -1 && snake.dir_y === 0)) {
-        snake.dir_x = 1;
-        snake.dir_y = 0;
-      }
+      snake.changeDirection("RIGHT");
       break;
   }
+}
+
+function refresh() {
+  document.location.reload(false);
 }
